@@ -1,0 +1,143 @@
+/* Основни стилове за тялото на страницата */
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9; /* Бял фон */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+/* Контейнер за съдържанието */
+.container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    width: 450px;
+    text-align: center;
+    animation: fadeIn 1s ease-out;
+}
+
+/* Лого */
+.logo-img {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo-img img {
+    width: 250px;
+    height: auto;
+    display: inline-block;
+    margin: 0 auto;
+}
+
+/* Заглавие */
+h1 {
+    color: #2c3e50;
+    font-size: 36px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-out;
+}
+
+/* Добавяне на анимация за плавно появяване */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Стилове за входното поле за изображение */
+input[type="file"] {
+    padding: 12px;
+    margin-top: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 16px;
+}
+
+/* Стилове за параграфите */
+p {
+    color: #555;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+/* Стилове за бутоните */
+button {
+    background: linear-gradient(135deg, #6e7dff, #5560ea); /* Сини бутони */
+    color: white;
+    border: none;
+    padding: 14px 28px;
+    margin-top: 20px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    width: 100%;
+}
+
+/* Ховър ефект за бутоните */
+button:hover {
+    background: linear-gradient(135deg, #5560ea, #6e7dff);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Активен ефект за бутоните */
+button:active {
+    transform: scale(0.98);
+    background: linear-gradient(135deg, #4a50d4, #4248c0);
+}
+
+/* Стилове за бутоните с икони */
+button i {
+    margin-right: 10px;
+}
+
+/* Стилове за изходния текст */
+.output-text {
+    color: #555;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+    margin-top: 20px;
+    font-size: 16px;
+}
+
+/* Аудио плейър */
+audio {
+    margin-top: 20px;
+    width: 100%;
+    border: none;
+    outline: none;
+}
+
+/* Анимация за плавно появяване на контейнера */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
