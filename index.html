@@ -3,37 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Текст от изображение</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Разпознаване на текст от изображение</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <div class="container">
-        <h1>Разпознаване на текст и обобщаване</h1>
-        
-        <!-- Лого -->
         <div class="logo-img">
-            <img src="c:\Users\Admin-64084\Downloads\ЛОГО.jpg" alt="Logo">
+            <!-- Логото на сайта (ако има такова) -->
+            <img src="logo.png" alt="Logo">
         </div>
-        
-        <!-- Качване на изображение -->
+
+        <h1>Разпознаване на текст</h1>
+
+        <!-- Вход за изображение -->
         <input type="file" id="imageInput" accept="image/*">
-        
-        <button id="analyzeButton">Анализирай изображение</button>
-        
-        <div id="extractedText" class="output-text"></div>
+        <button id="analyzeButton">Разпознай текст</button>
 
-        <!-- Обобщаване на текста -->
+        <!-- Разпознат текст -->
+        <p id="extractedText">Не е разпознат текст все още.</p>
+
+        <!-- Обобщаване на текст -->
         <button id="summarizeButton">Обобщи текста</button>
-        <div id="summaryText" class="output-text"></div>
 
-        <!-- Конвертиране на текста в аудио -->
+        <!-- Обобщен текст -->
+        <p id="summaryText">Няма обобщен текст.</p>
+
+        <!-- Конвертиране на текст в аудио -->
         <button id="convertToAudioButton">Конвертиране в аудио</button>
+
+        <!-- Аудио плеър -->
         <audio id="audioPlayer" controls></audio>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js"></script>
-    <script src="app.js"></script>
 </body>
 </html>
+
 
 
