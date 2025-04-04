@@ -79,6 +79,59 @@ app.post('/convert-to-audio', (req, res) => {
     });
 });
 
+const express = require('express');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const axios = require('axios');
+
+dotenv.config(); // Зареждаме променливите от .env файла
+
+const app = express();
+const port = 3000;
+
+// Добавете cors middleware, за да разрешите CORS
+app.use(cors());
+
+// Вашите съществуващи маршрути и логика
+// Примерен маршрут за обобщаване
+app.post('/summarize', async (req, res) => {
+    const { text } = req.body;
+    try {
+        const response = await axios.post(
+            'https://api.openai.com/v1/chat/completions',
+            {
+                model: 'gpt-3.5-turbo',
+                messages: [
+                    {
+                        role: 'system',
+                        content: 'Ти си помощник, който преразказва учебни текстове на лесен, кратък и ясен език за ученици.'
+                    },
+                    {
+                        role: 'user',
+                        content: text
+                    }
+                ],
+                temperature: 0.7
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.OPENAI_API_KEY}`
+                }
+            }
+        );
+        const summary = response.data.choices[0].message.content;
+        res.json({ summary });
+    } catch (error) {
+        console.error('Грешка при обобщаване:', error.response?.data || error.message);
+        res.status(500).send('Грешка при обобщаване');
+    }
+});
+
+// Слушаме на порт 3000
+app.listen(port, () => {
+    console.log(`Сървърът работи на http://localhost:${port}`);
+});
+
 app.listen(port, () => {
     console.log(`Сървърът работи на http://localhost:${port}`);
 });
