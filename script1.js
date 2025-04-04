@@ -35,7 +35,6 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
         return;
     }
 
-    // Изпращаме текста към сървъра за обобщаване чрез OpenAI
     fetch('http://localhost:3000/summarize', {
         method: 'POST',
         headers: {
@@ -43,19 +42,13 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
         },
         body: JSON.stringify({ text: extractedText })
     })
-    .then(response => {
-        if (!response.ok) {
-            // Ако отговорът не е успешен, хвърляме грешка
-            return response.json().then(errorData => { throw new Error(errorData.error || 'Неизвестна грешка'); });
-        }
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
         summaryElement.textContent = data.summary;
     })
     .catch(error => {
         console.error('Грешка при обобщаване:', error);
-        alert('Грешка при обобщаване на текста: ' + error.message);
+        alert('Грешка при обобщаване на текста!');
     });
 });
 
@@ -69,7 +62,6 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    // Изпращаме текста към сървъра за преобразуване в аудио (Voice RSS API)
     fetch('http://localhost:3000/convert-to-audio', {
         method: 'POST',
         headers: {
@@ -89,31 +81,6 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
     });
 });
 
-app.post('/summarize', async (req, res) => {
-    const { text } = req.body;
-    try {
-        const response = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
-            {
-                model: 'gpt-3.5-turbo',
-                messages: [
-                    { role: 'system', content: 'Ти си помощник, който преразказва учебни текстове на лесен, кратък и ясен език за ученици.' },
-                    { role: 'user', content: text }
-                ],
-                temperature: 0.7
-            },
-            {
-                headers: { Authorization: `Bearer ${process.env.OPENAI_API_KEY}` }
-            }
-        );
-        console.log('Отговор от OpenAI API:', response.data); // Добавете това за дебъгване
-        const summary = response.data.choices[0].message.content;
-        res.json({ summary });
-    } catch (error) {
-        console.error('Грешка при обобщаване:', error.response?.data || error.message);
-        res.status(500).send('Грешка при обобщаване');
-    }
-});
 
 
 
