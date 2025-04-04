@@ -1,4 +1,4 @@
-// Разпознаване на текст от изображение с Tesseract
+// Разпознаване на текст от изображение с Tesseract.js
 document.getElementById('analyzeButton').addEventListener('click', function () {
     const imageInput = document.getElementById('imageInput');
     const extractedTextElement = document.getElementById('extractedText');
@@ -25,7 +25,7 @@ document.getElementById('analyzeButton').addEventListener('click', function () {
     });
 });
 
-// Функция за интелигентно обобщаване на текста
+// Функция за интелигентно обобщаване на текста чрез OpenAI
 document.getElementById('summarizeButton').addEventListener('click', function () {
     const extractedText = document.getElementById('extractedText').textContent;
     const summaryElement = document.getElementById('summaryText');
@@ -35,7 +35,7 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
         return;
     }
 
-    // Изпращаме текста към сървъра за обобщаване
+    // Изпращаме текста към сървъра за обобщаване чрез OpenAI
     fetch('http://localhost:3000/summarize', {
         method: 'POST',
         headers: {
@@ -53,9 +53,7 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
     });
 });
 
-
-
-// Конвертиране на обобщения текст в аудио с Voice RSS
+// Конвертиране на обобщен текст в аудио чрез ElevenLabs
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
     const audioPlayer = document.getElementById('audioPlayer');
@@ -65,8 +63,8 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    // Изпращаме текста към сървъра за преобразуване в аудио
-    fetch('http://localhost:3000/text-to-speech', {
+    // Изпращаме текста към сървъра за преобразуване в аудио (ElevenLabs API)
+    fetch('http://localhost:3000/convert-to-audio', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -84,5 +82,6 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         alert('Грешка при преобразуване на текста в аудио');
     });
 });
+
 
 
