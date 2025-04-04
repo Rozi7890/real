@@ -43,35 +43,38 @@ app.post('/summarize', async (req, res) => {
     }
 });
 
-app.post('/text-to-speech', async (req, res) => {
+app.post('/convert-to-audio', (req, res) => {
     const { text } = req.body;
 
-    try {
-        const audioResponse = await axios({
-            method: 'post',
-            url: `https://api.elevenlabs.io/v1/text-to-speech/${process.env.VOICE_ID}`,
-            data: {
-                text: text,
-                model_id: "eleven_monolingual_v1",
-                voice_settings: {
-                    stability: 0.5,
-                    similarity_boost: 0.5
-                }
-            },
-            headers: {
-                'xi-api-key': process.env.ELEVENLABS_API_KEY,
-                'Content-Type': 'application/json'
-            },
-            responseType: 'arraybuffer'
-        });
-
-        const filePath = path.join(__dirname, 'output.mp3');
-        fs.writeFileSync(filePath, audioResponse.data);
-        res.sendFile(filePath);
-    } catch (error) {
-        console.error('Грешка при текст към реч:', error.response?.data || error.message);
-        res.status(500).send('Грешка при текст към реч');
+    if (!text) {
+        return res.status(400).send('Няма текст за конвертиране в аудио');
     }
+
+    const voiceRSSApiKey = process.env.VOICE_RSS_API_KEY;
+
+    axios.get('https://api.voicerss.org/', {
+        params: {
+            key: voiceRSSApiKey,
+            src: text,
+            hl: 'bg-bg', // Български език
+            v: 'Eva', // Името на гласа (можеш да смениш на друг, ако искаш)
+            r: '0', // Скорост на говоренето
+            c: 'mp3', // Формат на аудиото
+            f: '44khz_16bit_stereo', // Качество на аудиото
+        }
+    })
+    .then(response => {
+        res.set('Content-Type', 'audio/mpeg');
+        res.send(response.data);
+    })
+    .catch(error => {
+        console.error('Грешка при конвертиране на текста в аудио:', error);
+        res.status(500).send('Грешка при генериране на аудио');
+    });
+});
+
+app.listen(port, () => {
+    console.log(`Сървърът работи на http://localhost:${port}`);
 });
 
 app.listen(3000, () => {
