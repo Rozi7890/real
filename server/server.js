@@ -1,4 +1,3 @@
-// server/server.js
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
@@ -7,9 +6,12 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
+const port = 3000;
+
 app.use(cors());
 app.use(express.json());
 
+// Маршрут за обобщаване на текст чрез OpenAI
 app.post('/summarize', async (req, res) => {
     const { text } = req.body;
     try {
@@ -43,6 +45,7 @@ app.post('/summarize', async (req, res) => {
     }
 });
 
+// Маршрут за конвертиране на текст в аудио чрез Voice RSS
 app.post('/convert-to-audio', (req, res) => {
     const { text } = req.body;
 
@@ -52,12 +55,17 @@ app.post('/convert-to-audio', (req, res) => {
 
     const voiceRSSApiKey = process.env.VOICE_RSS_API_KEY;
 
+    // Проверка дали ключът е наличен
+    if (!voiceRSSApiKey) {
+        return res.status(500).send('API ключът за Voice RSS не е конфигуриран');
+    }
+
     axios.get('https://api.voicerss.org/', {
         params: {
             key: voiceRSSApiKey,
             src: text,
             hl: 'bg-bg', // Български език
-            v: 'Eva', // Името на гласа (можеш да смениш на друг, ако искаш)
+            v: 'Eva', // Името на гласа (можеш да го промениш)
             r: '0', // Скорост на говоренето
             c: 'mp3', // Формат на аудиото
             f: '44khz_16bit_stereo', // Качество на аудиото
@@ -77,6 +85,3 @@ app.listen(port, () => {
     console.log(`Сървърът работи на http://localhost:${port}`);
 });
 
-app.listen(3000, () => {
-    console.log('Сървърът е стартиран на http://localhost:3000');
-});
