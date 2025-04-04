@@ -1,4 +1,5 @@
 // Разпознаване на текст от изображение
+
 document.getElementById('analyzeButton').addEventListener('click', function () {
     const imageInput = document.getElementById('imageInput');
     const extractedTextElement = document.getElementById('extractedText');
@@ -25,33 +26,42 @@ document.getElementById('analyzeButton').addEventListener('click', function () {
     });
 });
 
-// Функция за интелигентно обобщаване на текста
-function summarizeText(text) {
-    const sentences = text.match(/[^.!?]+[.!?]/g) || [text];
-    if (sentences.length <= 2) return text;
+// Функция за AI обобщение
+async function summarizeTextAI(text) {
+    const apiKey = "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"; // 🔁 Замени с твоя OpenAI API ключ
+    const url = "https://api.openai.com/v1/chat/completions";
 
-    const wordFrequency = {};
-    text.toLowerCase().split(/\s+/).forEach(word => {
-        word = word.replace(/[^а-яa-z]/gi, '');
-        if (word.length > 3) {
-            wordFrequency[word] = (wordFrequency[word] || 0) + 1;
-        }
-    });
-    
-    const sentenceScores = sentences.map(sentence => {
-        const words = sentence.toLowerCase().split(/\s+/);
-        const score = words.reduce((sum, word) => sum + (wordFrequency[word] || 0), 0);
-        return { sentence, score };
-    });
-    
-    sentenceScores.sort((a, b) => b.score - a.score);
-    
-    const summary = sentenceScores.slice(0, Math.min(3, sentenceScores.length)).map(s => s.sentence).join(' ');
-    return summary;
+    try {
+        const response = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${apiKey}`
+            },
+            body: JSON.stringify({
+                model: "gpt-4-turbo", // Или "gpt-3.5-turbo"
+                messages: [
+                    { role: "system", content: "Ти си AI, който обобщава текст по ясен и смислен начин." },
+                    { role: "user", content: `Обобщи този текст:
+
+${text}` }
+                ],
+                max_tokens: 300,
+                temperature: 0.7
+            })
+        });
+
+        const result = await response.json();
+        return result.choices?.[0]?.message?.content || "Грешка при обобщаването.";
+    } catch (error) {
+        console.error("Грешка при AI обобщаването:", error);
+        return "Неуспешно обобщение.";
+    }
 }
 
 // Обобщаване на текста
-document.getElementById('summarizeButton').addEventListener('click', function () {
+
+document.getElementById('summarizeButton').addEventListener('click', async function () {
     const extractedText = document.getElementById('extractedText').textContent;
     const summaryElement = document.getElementById('summaryText');
 
@@ -60,11 +70,18 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
         return;
     }
 
-    const summarizedText = summarizeText(extractedText);
-    summaryElement.textContent = summarizedText;
+    summaryElement.textContent = "Обобщаване...";
+    
+    try {
+        const summarizedText = await summarizeTextAI(extractedText);
+        summaryElement.textContent = summarizedText;
+    } catch (error) {
+        summaryElement.textContent = "Грешка при AI обобщаването!";
+    }
 });
 
 // Конвертиране в аудио чрез VoiceRSS
+
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
     const audioPlayer = document.getElementById('audioPlayer');
@@ -74,7 +91,7 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b'; // 🔁 Смени с твоя ключ!
+    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b'; // 🔁 Смени с твоя API ключ за VoiceRSS
     const encodedText = encodeURIComponent(summaryText);
     const ttsUrl = `https://api.voicerss.org/?key=${apiKey}&hl=bg-bg&src=${encodedText}&c=MP3&f=44khz_16bit_stereo`;
 
@@ -84,8 +101,6 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         alert('Грешка при зареждане на аудиото. Опитайте отново!');
     });
 });
-
-
 
 
 
