@@ -1,4 +1,4 @@
-// Разпознаване на текст от изображение
+// Разпознаване на текст от изображение с Tesseract
 document.getElementById('analyzeButton').addEventListener('click', function () {
     const imageInput = document.getElementById('imageInput');
     const extractedTextElement = document.getElementById('extractedText');
@@ -27,25 +27,27 @@ document.getElementById('analyzeButton').addEventListener('click', function () {
 
 // Функция за интелигентно обобщаване на текста
 function summarizeText(text) {
-    const sentences = text.match(/[^.!?]+[.!?]/g) || [text];
-    if (sentences.length <= 2) return text;
+    const sentences = text.match(/[^.!?]+[.!?]/g) || [text]; // Разделяне на текста на изречения
+    if (sentences.length <= 2) return text; // Ако има само едно изречение, връща целия текст
 
     const wordFrequency = {};
     text.toLowerCase().split(/\s+/).forEach(word => {
-        word = word.replace(/[^а-яa-z]/gi, '');
+        word = word.replace(/[^а-яa-z]/gi, ''); // Премахване на специални символи
         if (word.length > 3) {
             wordFrequency[word] = (wordFrequency[word] || 0) + 1;
         }
     });
-    
+
+    // Оценяване на изреченията според честотата на думите
     const sentenceScores = sentences.map(sentence => {
         const words = sentence.toLowerCase().split(/\s+/);
         const score = words.reduce((sum, word) => sum + (wordFrequency[word] || 0), 0);
         return { sentence, score };
     });
-    
+
+    // Подреждаме изреченията по оценка и вземаме най-важните
     sentenceScores.sort((a, b) => b.score - a.score);
-    
+
     const summary = sentenceScores.slice(0, Math.min(3, sentenceScores.length)).map(s => s.sentence).join(' ');
     return summary;
 }
@@ -64,7 +66,7 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
     summaryElement.textContent = summarizedText;
 });
 
-// Конвертиране в аудио чрез VoiceRSS
+// Конвертиране на обобщения текст в аудио с Voice RSS
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
     const audioPlayer = document.getElementById('audioPlayer');
@@ -74,14 +76,16 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b'; // 🔁 Смени с твоя ключ!
-    const encodedText = encodeURIComponent(summaryText);
-    const ttsUrl = `https://api.voicerss.org/?key=${apiKey}&hl=bg-bg&src=${encodedText}&c=MP3&f=44khz_16bit_stereo`;
+    // Постави твоят Voice RSS API ключ тук
+    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b';
+    const voiceUrl = `https://api.voicerss.org/?key=${apiKey}&hl=bg-bg&src=${encodeURIComponent(summaryText)}&c=MP3`;
 
-    audioPlayer.src = ttsUrl;
+    // Зареждаме аудиото в плейъра
+    audioPlayer.src = voiceUrl;
     audioPlayer.play().catch(error => {
         console.error('Грешка при пускане на аудиото:', error);
         alert('Грешка при зареждане на аудиото. Опитайте отново!');
     });
 });
+
 
