@@ -3,39 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Разпознаване на текст от изображение</title>
-    <link rel="stylesheet" href="style1.css">
+    <title>Smartify</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@2.1.1/dist/tesseract.min.js"></script>
 </head>
 <body>
     <div class="container">
+        <!-- Лого -->
         <div class="logo-img">
-            <!-- Логото на сайта (ако има такова) -->
-            <img src="logo.png" alt="Logo">
+            <img src="c:\Users\Admin-64084\Downloads\ЛОГО.jpg" alt="Smartify Logo">
         </div>
 
-        <h1>Разпознаване на текст</h1>
+        <h1>Smartify</h1>
 
-        <!-- Вход за изображение -->
-        <input type="file" id="imageInput" accept="image/*">
-        <button id="analyzeButton">Разпознай текст</button>
+        <!-- Входно поле за изображение -->
+        <input type="file" id="imageInput" accept="image/*" class="file-input">
 
-        <!-- Разпознат текст -->
-        <p id="extractedText">Не е разпознат текст все още.</p>
+        <!-- Бутон за разпознаване на текст -->
+        <button id="analyzeButton" class="btn-main">Разпознай текст</button>
 
-        <!-- Обобщаване на текст -->
-        <button id="summarizeButton">Обобщи текста</button>
+        <!-- Изходен текст -->
+        <div id="extractedText" class="output-text"></div>
+
+        <!-- Бутон за обобщаване на текста -->
+        <button id="summarizeButton" class="btn-main">Обобщи текста</button>
 
         <!-- Обобщен текст -->
-        <p id="summaryText">Няма обобщен текст.</p>
+        <div id="summaryText" class="output-text"></div>
 
-        <!-- Конвертиране на текст в аудио -->
-        <button id="convertToAudioButton">Конвертиране в аудио</button>
+        <!-- Бутон за преобразуване в аудио -->
+        <button id="convertToAudioButton" class="btn-main">Прочети текста</button>
 
-        <!-- Аудио плеър -->
-        <audio id="audioPlayer" controls></audio>
+        <!-- Аудио плейър -->
+        <audio id="audioPlayer" class="audio-player" controls></audio>
     </div>
+
+    <!-- Скрипт за функционалностите -->
+    <script src="script.js"></script>
 </body>
 </html>
+
 
 
 
