@@ -65,7 +65,7 @@ async function extractTextFromPDF(file) {
 // Функция за AI обобщение
 async function summarizeTextAI(text) {
     // ВАЖНО: Замени YOUR_OPENAI_API_KEY с валиден ключ!
-    const apiKey = "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";  
+    const apiKey = "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";  
     const url = "https://api.openai.com/v1/chat/completions";
 
     try {
