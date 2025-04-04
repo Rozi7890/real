@@ -1,4 +1,4 @@
-// Разпознаване на текст от изображение с Tesseract.js
+// Разпознаване на текст от изображение с Tesseract
 document.getElementById('analyzeButton').addEventListener('click', function () {
     const imageInput = document.getElementById('imageInput');
     const extractedTextElement = document.getElementById('extractedText');
@@ -53,7 +53,6 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
     });
 });
 
-// Конвертиране на обобщен текст в аудио чрез ElevenLabs
 // Конвертиране на обобщен текст в аудио чрез Voice RSS
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
@@ -83,6 +82,7 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         alert('Грешка при преобразуване на текста в аудио');
     });
 });
+
 
 
 
