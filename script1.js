@@ -1,30 +1,63 @@
-// Разпознаване на текст от изображение
-
-document.getElementById('analyzeButton').addEventListener('click', function () {
-    const imageInput = document.getElementById('imageInput');
+// Разпознаване на текст от изображение или PDF
+document.getElementById('analyzeButton').addEventListener('click', async function () {
+    const fileInput = document.getElementById('fileInput');
     const extractedTextElement = document.getElementById('extractedText');
 
-    if (imageInput.files.length === 0) {
-        alert('Моля, качете изображение!');
+    if (fileInput.files.length === 0) {
+        alert('Моля, качете изображение или PDF файл!');
         return;
     }
 
-    const imageFile = imageInput.files[0];
+    const file = fileInput.files[0];
+    const fileType = file.type;
 
-    Tesseract.recognize(
-        imageFile,
-        'bul', // Български език
-        {
-            logger: (m) => console.log(m)
-        }
-    ).then(({ data: { text } }) => {
-        extractedTextElement.textContent = text || 'Не беше намерен текст в изображението.';
-        console.log('Разпознат текст:', text);
-    }).catch(error => {
-        console.error('Грешка при разпознаване:', error);
-        alert('Неуспешно разпознаване на текста!');
-    });
+    extractedTextElement.textContent = "Обработване...";
+
+    if (fileType === "application/pdf") {
+        // Разпознаване на текст от PDF
+        extractTextFromPDF(file).then(text => {
+            extractedTextElement.textContent = text || 'Не беше намерен текст в PDF файла.';
+        }).catch(error => {
+            console.error('Грешка при разпознаване:', error);
+            alert('Неуспешно разпознаване на текста от PDF!');
+        });
+    } else {
+        // Разпознаване на текст от изображение с Tesseract.js
+        Tesseract.recognize(
+            file,
+            'bul', // Български език
+            { logger: (m) => console.log(m) }
+        ).then(({ data: { text } }) => {
+            extractedTextElement.textContent = text || 'Не беше намерен текст в изображението.';
+        }).catch(error => {
+            console.error('Грешка при разпознаване:', error);
+            alert('Неуспешно разпознаване на текста!');
+        });
+    }
 });
+
+// Функция за разпознаване на текст от PDF (използва pdf.js)
+async function extractTextFromPDF(file) {
+    const reader = new FileReader();
+    return new Promise((resolve, reject) => {
+        reader.onload = async function () {
+            try {
+                const pdf = await pdfjsLib.getDocument({ data: new Uint8Array(reader.result) }).promise;
+                let text = "";
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const content = await page.getTextContent();
+                    text += content.items.map(item => item.str).join(" ") + " ";
+                }
+                resolve(text.trim());
+            } catch (error) {
+                reject(error);
+            }
+        };
+        reader.onerror = () => reject(reader.error);
+        reader.readAsArrayBuffer(file);
+    });
+}
 
 // Функция за AI обобщение
 async function summarizeTextAI(text) {
@@ -39,12 +72,10 @@ async function summarizeTextAI(text) {
                 "Authorization": `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4-turbo", // Или "gpt-3.5-turbo"
+                model: "gpt-4-turbo",
                 messages: [
                     { role: "system", content: "Ти си AI, който обобщава текст по ясен и смислен начин." },
-                    { role: "user", content: `Обобщи този текст:
-
-${text}` }
+                    { role: "user", content: `Обобщи този текст:\n\n${text}` }
                 ],
                 max_tokens: 300,
                 temperature: 0.7
@@ -60,7 +91,6 @@ ${text}` }
 }
 
 // Обобщаване на текста
-
 document.getElementById('summarizeButton').addEventListener('click', async function () {
     const extractedText = document.getElementById('extractedText').textContent;
     const summaryElement = document.getElementById('summaryText');
@@ -71,7 +101,7 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
     }
 
     summaryElement.textContent = "Обобщаване...";
-    
+
     try {
         const summarizedText = await summarizeTextAI(extractedText);
         summaryElement.textContent = summarizedText;
@@ -81,7 +111,6 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
 });
 
 // Конвертиране в аудио чрез VoiceRSS
-
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
     const audioPlayer = document.getElementById('audioPlayer');
