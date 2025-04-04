@@ -26,33 +26,6 @@ document.getElementById('analyzeButton').addEventListener('click', function () {
 });
 
 // Функция за интелигентно обобщаване на текста
-function summarizeText(text) {
-    const sentences = text.match(/[^.!?]+[.!?]/g) || [text]; // Разделяне на текста на изречения
-    if (sentences.length <= 2) return text; // Ако има само едно изречение, връща целия текст
-
-    const wordFrequency = {};
-    text.toLowerCase().split(/\s+/).forEach(word => {
-        word = word.replace(/[^а-яa-z]/gi, ''); // Премахване на специални символи
-        if (word.length > 3) {
-            wordFrequency[word] = (wordFrequency[word] || 0) + 1;
-        }
-    });
-
-    // Оценяване на изреченията според честотата на думите
-    const sentenceScores = sentences.map(sentence => {
-        const words = sentence.toLowerCase().split(/\s+/);
-        const score = words.reduce((sum, word) => sum + (wordFrequency[word] || 0), 0);
-        return { sentence, score };
-    });
-
-    // Подреждаме изреченията по оценка и вземаме най-важните
-    sentenceScores.sort((a, b) => b.score - a.score);
-
-    const summary = sentenceScores.slice(0, Math.min(3, sentenceScores.length)).map(s => s.sentence).join(' ');
-    return summary;
-}
-
-// Обобщаване на текста
 document.getElementById('summarizeButton').addEventListener('click', function () {
     const extractedText = document.getElementById('extractedText').textContent;
     const summaryElement = document.getElementById('summaryText');
@@ -62,9 +35,25 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
         return;
     }
 
-    const summarizedText = summarizeText(extractedText);
-    summaryElement.textContent = summarizedText;
+    // Изпращаме текста към сървъра за обобщаване
+    fetch('http://localhost:3000/summarize', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: extractedText })
+    })
+    .then(response => response.json())
+    .then(data => {
+        summaryElement.textContent = data.summary;
+    })
+    .catch(error => {
+        console.error('Грешка при обобщаване:', error);
+        alert('Грешка при обобщаване на текста');
+    });
 });
+
+
 
 // Конвертиране на обобщения текст в аудио с Voice RSS
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
@@ -76,15 +65,23 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    // Постави твоят Voice RSS API ключ тук
-    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b';
-    const voiceUrl = `https://api.voicerss.org/?key=${apiKey}&hl=bg-bg&src=${encodeURIComponent(summaryText)}&c=MP3`;
-
-    // Зареждаме аудиото в плейъра
-    audioPlayer.src = voiceUrl;
-    audioPlayer.play().catch(error => {
-        console.error('Грешка при пускане на аудиото:', error);
-        alert('Грешка при зареждане на аудиото. Опитайте отново!');
+    // Изпращаме текста към сървъра за преобразуване в аудио
+    fetch('http://localhost:3000/text-to-speech', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: summaryText })
+    })
+    .then(response => response.blob())
+    .then(blob => {
+        const url = URL.createObjectURL(blob);
+        audioPlayer.src = url;
+        audioPlayer.play();
+    })
+    .catch(error => {
+        console.error('Грешка при конвертиране в аудио:', error);
+        alert('Грешка при преобразуване на текста в аудио');
     });
 });
 
