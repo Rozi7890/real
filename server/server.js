@@ -53,7 +53,6 @@ app.post('/convert-to-audio', (req, res) => {
 
     const voiceRSSApiKey = process.env.VOICE_RSS_API_KEY;
 
-    // Проверка дали ключът е наличен
     if (!voiceRSSApiKey) {
         return res.status(500).send('API ключът за Voice RSS не е конфигуриран');
     }
@@ -62,11 +61,11 @@ app.post('/convert-to-audio', (req, res) => {
         params: {
             key: voiceRSSApiKey,
             src: text,
-            hl: 'bg-bg', // Български език
-            v: 'Eva', // Името на гласа (можеш да го промениш)
-            r: '0', // Скорост на говоренето
-            c: 'mp3', // Формат на аудиото
-            f: '44khz_16bit_stereo', // Качество на аудиото
+            hl: 'bg-bg', 
+            v: 'Eva', 
+            r: '0', 
+            c: 'mp3', 
+            f: '44khz_16bit_stereo',
         }
     })
     .then(response => {
@@ -79,7 +78,6 @@ app.post('/convert-to-audio', (req, res) => {
     });
 });
 
-// Слушаме на порт 3000
 app.listen(port, () => {
     console.log(`Сървърът работи на http://localhost:${port}`);
 });
