@@ -1,4 +1,4 @@
-// Разпознаване на текст от изображение с Tesseract
+// Разпознаване на текст от изображение
 document.getElementById('analyzeButton').addEventListener('click', function () {
     const imageInput = document.getElementById('imageInput');
     const extractedTextElement = document.getElementById('extractedText');
@@ -25,7 +25,32 @@ document.getElementById('analyzeButton').addEventListener('click', function () {
     });
 });
 
-// Функция за интелигентно обобщаване на текста чрез OpenAI
+// Функция за интелигентно обобщаване на текста
+function summarizeText(text) {
+    const sentences = text.match(/[^.!?]+[.!?]/g) || [text];
+    if (sentences.length <= 2) return text;
+
+    const wordFrequency = {};
+    text.toLowerCase().split(/\s+/).forEach(word => {
+        word = word.replace(/[^а-яa-z]/gi, '');
+        if (word.length > 3) {
+            wordFrequency[word] = (wordFrequency[word] || 0) + 1;
+        }
+    });
+    
+    const sentenceScores = sentences.map(sentence => {
+        const words = sentence.toLowerCase().split(/\s+/);
+        const score = words.reduce((sum, word) => sum + (wordFrequency[word] || 0), 0);
+        return { sentence, score };
+    });
+    
+    sentenceScores.sort((a, b) => b.score - a.score);
+    
+    const summary = sentenceScores.slice(0, Math.min(3, sentenceScores.length)).map(s => s.sentence).join(' ');
+    return summary;
+}
+
+// Обобщаване на текста
 document.getElementById('summarizeButton').addEventListener('click', function () {
     const extractedText = document.getElementById('extractedText').textContent;
     const summaryElement = document.getElementById('summaryText');
@@ -35,24 +60,11 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
         return;
     }
 
-    fetch('http://localhost:3000/summarize', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ text: extractedText })
-    })
-    .then(response => response.json())
-    .then(data => {
-        summaryElement.textContent = data.summary;
-    })
-    .catch(error => {
-        console.error('Грешка при обобщаване:', error);
-        alert('Грешка при обобщаване на текста!');
-    });
+    const summarizedText = summarizeText(extractedText);
+    summaryElement.textContent = summarizedText;
 });
 
-// Конвертиране на обобщен текст в аудио чрез Voice RSS
+// Конвертиране в аудио чрез VoiceRSS
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
     const audioPlayer = document.getElementById('audioPlayer');
@@ -62,24 +74,17 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    fetch('http://localhost:3000/convert-to-audio', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ text: summaryText })
-    })
-    .then(response => response.blob())
-    .then(blob => {
-        const url = URL.createObjectURL(blob);
-        audioPlayer.src = url;
-        audioPlayer.play();
-    })
-    .catch(error => {
-        console.error('Грешка при конвертиране в аудио:', error);
-        alert('Грешка при преобразуване на текста в аудио');
+    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b'; // 🔁 Смени с твоя ключ!
+    const encodedText = encodeURIComponent(summaryText);
+    const ttsUrl = `https://api.voicerss.org/?key=${apiKey}&hl=bg-bg&src=${encodedText}&c=MP3&f=44khz_16bit_stereo`;
+
+    audioPlayer.src = ttsUrl;
+    audioPlayer.play().catch(error => {
+        console.error('Грешка при пускане на аудиото:', error);
+        alert('Грешка при зареждане на аудиото. Опитайте отново!');
     });
 });
+
 
 
 
