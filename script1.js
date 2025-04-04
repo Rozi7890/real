@@ -1,3 +1,6 @@
+// Инициализиране на pdf.js worker
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.13.216/pdf.worker.min.js';
+
 // Разпознаване на текст от изображение или PDF
 document.getElementById('analyzeButton').addEventListener('click', async function () {
     const fileInput = document.getElementById('fileInput');
@@ -95,7 +98,7 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
     const extractedText = document.getElementById('extractedText').textContent;
     const summaryElement = document.getElementById('summaryText');
 
-    if (!extractedText || extractedText.includes('качите изображение')) {
+    if (!extractedText || extractedText.includes('качете')) {
         alert('Няма разпознат текст за обобщаване!');
         return;
     }
@@ -130,6 +133,7 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         alert('Грешка при зареждане на аудиото. Опитайте отново!');
     });
 });
+
 
 
 
