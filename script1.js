@@ -21,7 +21,7 @@ document.getElementById('analyzeButton').addEventListener('click', async functio
         extractTextFromPDF(file).then(text => {
             extractedTextElement.textContent = text || 'Не беше намерен текст в PDF файла.';
         }).catch(error => {
-            console.error('Грешка при разпознаване:', error);
+            console.error('Грешка при разпознаване на PDF:', error);
             alert('Неуспешно разпознаване на текста от PDF!');
         });
     } else {
@@ -33,7 +33,7 @@ document.getElementById('analyzeButton').addEventListener('click', async functio
         ).then(({ data: { text } }) => {
             extractedTextElement.textContent = text || 'Не беше намерен текст в изображението.';
         }).catch(error => {
-            console.error('Грешка при разпознаване:', error);
+            console.error('Грешка при разпознаване на изображението:', error);
             alert('Неуспешно разпознаване на текста!');
         });
     }
@@ -64,7 +64,8 @@ async function extractTextFromPDF(file) {
 
 // Функция за AI обобщение
 async function summarizeTextAI(text) {
-    const apiKey = "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"; // 🔁 Замени с твоя OpenAI API ключ
+    // ВАЖНО: Замени YOUR_OPENAI_API_KEY с валиден ключ!
+    const apiKey = "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";  
     const url = "https://api.openai.com/v1/chat/completions";
 
     try {
@@ -75,7 +76,8 @@ async function summarizeTextAI(text) {
                 "Authorization": `Bearer ${apiKey}`
             },
             body: JSON.stringify({
-                model: "gpt-4-turbo",
+                // Ако нямаш достъп до GPT-4, използвай "gpt-3.5-turbo"
+                model: "gpt-3.5-turbo",
                 messages: [
                     { role: "system", content: "Ти си AI, който обобщава текст по ясен и смислен начин." },
                     { role: "user", content: `Обобщи този текст:\n\n${text}` }
@@ -85,7 +87,14 @@ async function summarizeTextAI(text) {
             })
         });
 
+        console.log('OpenAI API status:', response.status);
         const result = await response.json();
+        console.log('OpenAI API response:', result);
+
+        // Проверка дали API връща грешка
+        if (response.status !== 200) {
+            return "Грешка при обобщаването: " + (result.error ? result.error.message : "Неизвестна грешка.");
+        }
         return result.choices?.[0]?.message?.content || "Грешка при обобщаването.";
     } catch (error) {
         console.error("Грешка при AI обобщаването:", error);
@@ -123,7 +132,8 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b'; // 🔁 Смени с твоя API ключ за VoiceRSS
+    // ВАЖНО: Замени YOUR_VOICERSS_API_KEY с твоя валиден ключ!
+    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b';
     const encodedText = encodeURIComponent(summaryText);
     const ttsUrl = `https://api.voicerss.org/?key=${apiKey}&hl=bg-bg&src=${encodedText}&c=MP3&f=44khz_16bit_stereo`;
 
@@ -133,6 +143,7 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         alert('Грешка при зареждане на аудиото. Опитайте отново!');
     });
 });
+
 
 
 
