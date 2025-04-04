@@ -54,6 +54,7 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
 });
 
 // Конвертиране на обобщен текст в аудио чрез ElevenLabs
+// Конвертиране на обобщен текст в аудио чрез Voice RSS
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
     const audioPlayer = document.getElementById('audioPlayer');
@@ -63,7 +64,7 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    // Изпращаме текста към сървъра за преобразуване в аудио (ElevenLabs API)
+    // Изпращаме текста към сървъра за преобразуване в аудио (Voice RSS API)
     fetch('http://localhost:3000/convert-to-audio', {
         method: 'POST',
         headers: {
@@ -82,6 +83,7 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         alert('Грешка при преобразуване на текста в аудио');
     });
 });
+
 
 
 
