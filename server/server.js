@@ -2,8 +2,6 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
-const fs = require('fs');
-const path = require('path');
 
 const app = express();
 const port = 3000;
@@ -84,3 +82,4 @@ app.post('/convert-to-audio', (req, res) => {
 app.listen(port, () => {
     console.log(`Сървърът работи на http://localhost:${port}`);
 });
+
