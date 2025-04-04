@@ -64,7 +64,7 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
     summaryElement.textContent = summarizedText;
 });
 
-// Конвертиране в аудио
+// Конвертиране в аудио чрез VoiceRSS
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
     const audioPlayer = document.getElementById('audioPlayer');
@@ -74,16 +74,14 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    // Кодираме текста за URL
+    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b'; // 🔁 Смени с твоя ключ!
     const encodedText = encodeURIComponent(summaryText);
-    
-    // Създаваме Google TTS линк
-    const googleTTSUrl = `https://translate.google.com/translate_tts?ie=UTF-8&q=${encodedText}&tl=bg&client=tw-ob`;
+    const ttsUrl = `https://api.voicerss.org/?key=${apiKey}&hl=bg-bg&src=${encodedText}&c=MP3&f=44khz_16bit_stereo`;
 
-    // Зареждаме аудиото в плейъра
-    audioPlayer.src = googleTTSUrl;
+    audioPlayer.src = ttsUrl;
     audioPlayer.play().catch(error => {
         console.error('Грешка при пускане на аудиото:', error);
         alert('Грешка при зареждане на аудиото. Опитайте отново!');
     });
 });
+
