@@ -43,13 +43,19 @@ document.getElementById('summarizeButton').addEventListener('click', function ()
         },
         body: JSON.stringify({ text: extractedText })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) {
+            // Ако отговорът не е успешен, хвърляме грешка
+            return response.json().then(errorData => { throw new Error(errorData.error || 'Неизвестна грешка'); });
+        }
+        return response.json();
+    })
     .then(data => {
         summaryElement.textContent = data.summary;
     })
     .catch(error => {
         console.error('Грешка при обобщаване:', error);
-        alert('Грешка при обобщаване на текста');
+        alert('Грешка при обобщаване на текста: ' + error.message);
     });
 });
 
