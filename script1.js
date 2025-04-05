@@ -62,7 +62,7 @@ async function extractTextFromPDF(file) {
 }
 
 // 👉 ТУК ВМЪКНИ ТВОЯ APYHUB API КЛЮЧ
-const APYHUB_API_KEY = 'APY0U4A3taPQW9hc803Bvbqyqp3XhM4XpPLbpnc2bOUdb2KFqzatMJVXK2gILlRAq6BQtgs'; // Твоят ApyHub API ключ
+const APYHUB_API_KEY = 'APY0U4A3taPQW9hc803Bvbqyqp3XhM4XpPLbpnc2bOUdb2KFqzatMJVXK2gILlRAq6BQtgs'; // Замени с твоя API ключ
 
 // Обобщаване чрез ApyHub
 async function summarizeTextAI(text) {
@@ -104,7 +104,7 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
 });
 
 // 👉 ТУК ВМЪКНИ ТВОЯ VOICERSS API КЛЮЧ
-const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b';
+const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b'; // Замени с твоя API ключ
 
 // Преобразуване в аудио с VoiceRSS
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
