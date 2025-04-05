@@ -24,7 +24,7 @@ jobs:
     - name: Deploy to server
       env:
         OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}  # Извличаме ключа от GitHub Secrets
-      run: |
+      run: npm start |
         # Тук можеш да добавиш командите за деплойване на сървъра
         npm start  # Ако използваш npm за старт на сървъра
 
