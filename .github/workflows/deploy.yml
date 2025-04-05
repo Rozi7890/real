@@ -1,33 +1,32 @@
-name: Deploy OpenAI Backend
+name: Deploy to Server
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main  # или друга основна клонка, която използваш
 
 jobs:
-  build-and-start:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Клониране на репото
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Инсталиране на Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+    - name: Set up Node.js
+      uses: actions/setup-node@v2
+      with:
+        node-version: '14'
 
-      - name: Инсталиране на зависимости
-        run: |
-          cd backend
-          npm install
+    - name: Install dependencies
+      run: npm install
 
-      - name: Създаване на .env файл от GitHub Secrets
-        run: |
-          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > backend/.env
+    - name: Set environment variables
+      run: |
+        echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
 
-      - name: Стартиране на сървъра (локално, примерно)
-        run: |
-          cd backend
-          node server.js
+    - name: Deploy to server
+      run: |
+        git remote add heroku https://git.heroku.com/your-app-name.git
+        git push heroku main
 
