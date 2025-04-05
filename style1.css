@@ -77,7 +77,7 @@ input[type="file"] {
     align-items: center;
     justify-content: center;
     margin-top: 20px;
-    width: auto;
+    width: 100%; /* Дълъг колкото другите бутони */
 }
 
 /* Ховър ефект за персонализирания бутон */
@@ -145,12 +145,48 @@ button i {
     font-size: 16px;
 }
 
-/* Аудио плейър */
-audio {
+/* Нов стил за аудио плейъра */
+.audio-player-container {
     margin-top: 20px;
     width: 100%;
-    border: none;
+    background-color: #f0f0f0;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.audio-player-container audio {
+    width: 80%;
+    border-radius: 10px;
     outline: none;
+}
+
+/* Стил за бутон за пускане на аудио */
+.audio-play-button {
+    background: linear-gradient(135deg, #ff9f00, #ff6f00);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 22px;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.audio-play-button:hover {
+    background: linear-gradient(135deg, #ff6f00, #ff9f00);
+    transform: scale(1.05);
+}
+
+.audio-play-button:active {
+    transform: scale(0.98);
+    background: linear-gradient(135deg, #e87c00, #e66b00);
 }
 
 
