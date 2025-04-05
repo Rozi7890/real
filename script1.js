@@ -64,42 +64,16 @@ async function extractTextFromPDF(file) {
 
 // Функция за AI обобщение
 async function summarizeTextAI(text) {
-    // ВАЖНО: Замени YOUR_OPENAI_API_KEY с валиден ключ!
-    const apiKey = "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";  
-    const url = "https://api.openai.com/v1/chat/completions";
+    const response = await fetch('http://localhost:3000/summarize', {  // Адрес на сървъра
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text })
+    });
 
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${apiKey}`
-            },
-            body: JSON.stringify({
-                // Ако нямаш достъп до GPT-4, използвай "gpt-3.5-turbo"
-                model: "gpt-3.5-turbo",
-                messages: [
-                    { role: "system", content: "Ти си AI, който обобщава текст по ясен и смислен начин." },
-                    { role: "user", content: `Обобщи този текст:\n\n${text}` }
-                ],
-                max_tokens: 300,
-                temperature: 0.7
-            })
-        });
-
-        console.log('OpenAI API status:', response.status);
-        const result = await response.json();
-        console.log('OpenAI API response:', result);
-
-        // Проверка дали API връща грешка
-        if (response.status !== 200) {
-            return "Грешка при обобщаването: " + (result.error ? result.error.message : "Неизвестна грешка.");
-        }
-        return result.choices?.[0]?.message?.content || "Грешка при обобщаването.";
-    } catch (error) {
-        console.error("Грешка при AI обобщаването:", error);
-        return "Неуспешно обобщение.";
-    }
+    const result = await response.json();
+    return result.summary || "Грешка при обобщаването.";
 }
 
 // Обобщаване на текста
