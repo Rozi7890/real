@@ -61,24 +61,18 @@ async function extractTextFromPDF(file) {
     });
 }
 
-// 👉 ТУК ВМЪКНИ ТВОЯ HUGGINGFACE API КЛЮЧ
-const HUGGINGFACE_API_KEY = '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'; // Замени с твоя API ключ от Hugging Face
-
-// Обобщаване чрез Hugging Face
+// Обобщаване чрез бекенд сървъра
 async function summarizeTextAI(text) {
-    const response = await fetch('https://api-inference.huggingface.co/models/facebook/bart-large-cnn', {
+    const response = await fetch('http://localhost:3000/summarize', {  // Променете на правилния адрес на вашия бекенд
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-            inputs: text,
-        })
+        body: JSON.stringify({ text: text })
     });
 
     const result = await response.json();
-    return result[0].summary_text || "Грешка при обобщаването.";
+    return result.summary || "Грешка при обобщаването.";
 }
 
 // Обработка на бутона "Обобщи"
@@ -102,10 +96,7 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
     }
 });
 
-// 👉 ТУК ВМЪКНИ ТВОЯ VOICERSS API КЛЮЧ
-const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b'; // Замени с твоя API ключ от VoiceRSS
-
-// Преобразуване в аудио с VoiceRSS
+// Преобразуване в аудио чрез VoiceRSS API
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
 
@@ -115,7 +106,7 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
     }
 
     const audioPlayer = document.getElementById('audioPlayer');
-    audioPlayer.src = `https://api.voicerss.org/?key=${VOICERSS_API_KEY}&hl=bg-bg&src=${encodeURIComponent(summaryText)}&r=0`;
+    audioPlayer.src = `https://api.voicerss.org/?key=c7e7512d876444aa933c2a0a21f6ad8b&hl=bg-bg&src=${encodeURIComponent(summaryText)}&r=0`;
 });
 
 
