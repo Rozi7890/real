@@ -62,7 +62,7 @@ async function extractTextFromPDF(file) {
 }
 
 // 👉 ТУК ВМЪКНИ ТВОЯ APYHUB API КЛЮЧ
-const APYHUB_API_KEY = 'APY0U4A3taPQW9hc803Bvbqyqp3XhM4XpPLbpnc2bOUdb2KFqzatMJVXK2gILlRAq6BQtgs'; // Вмъкни тук твоят API ключ за ApyHub
+const APYHUB_API_KEY = 'APY0U4A3taPQW9hc803Bvbqyqp3XhM4XpPLbpnc2bOUdb2KFqzatMJVXK2gILlRAq6BQtgs'; // Твоят ApyHub API ключ
 
 // Обобщаване чрез ApyHub
 async function summarizeTextAI(text) {
@@ -104,26 +104,19 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
 });
 
 // 👉 ТУК ВМЪКНИ ТВОЯ VOICERSS API КЛЮЧ
-const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b'; // Вмъкни тук твоят API ключ за VoiceRSS
+const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b';
 
-// Превръщане на текста в аудио
+// Преобразуване в аудио с VoiceRSS
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
-    const audioPlayer = document.getElementById('audioPlayer');
 
-    if (!summaryText) {
-        alert('Няма обобщен текст за конвертиране в аудио!');
+    if (!summaryText || summaryText.includes('Грешка')) {
+        alert('Няма текст за преобразуване в аудио!');
         return;
     }
 
-    const encodedText = encodeURIComponent(summaryText);
-    const ttsUrl = `https://api.voicerss.org/?key=${VOICERSS_API_KEY}&hl=bg-bg&src=${encodedText}&c=MP3&f=44khz_16bit_stereo`;
-
-    audioPlayer.src = ttsUrl;
-    audioPlayer.play().catch(error => {
-        console.error('Грешка при пускане на аудиото:', error);
-        alert('Грешка при зареждане на аудиото. Опитайте отново!');
-    });
+    const audioPlayer = document.getElementById('audioPlayer');
+    audioPlayer.src = `https://api.voicerss.org/?key=${VOICERSS_API_KEY}&hl=bg-bg&src=${encodeURIComponent(summaryText)}&r=0`;
 });
 
 
