@@ -1,1 +1,33 @@
+name: Deploy OpenAI Backend
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build-and-start:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Клониране на репото
+        uses: actions/checkout@v3
+
+      - name: Инсталиране на Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Инсталиране на зависимости
+        run: |
+          cd backend
+          npm install
+
+      - name: Създаване на .env файл от GitHub Secrets
+        run: |
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > backend/.env
+
+      - name: Стартиране на сървъра (локално, примерно)
+        run: |
+          cd backend
+          node server.js
 
