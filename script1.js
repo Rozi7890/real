@@ -63,13 +63,20 @@ async function extractTextFromPDF(file) {
 
 // Обобщаване чрез бекенд сървъра
 async function summarizeTextAI(text) {
-    const response = await fetch('http://localhost:3000/summarize', {  // Променете на правилния адрес на вашия бекенд
+    const response = await fetch('http://localhost:3000/summarize', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ text: text })
     });
+
+    if (!response.ok) {
+        const errorMessage = await response.text();
+        console.error('Грешка при обобщаването:', errorMessage);
+        alert('Грешка при обобщаването!');
+        return null;
+    }
 
     const result = await response.json();
     return result.summary || "Грешка при обобщаването.";
@@ -108,10 +115,6 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
     const audioPlayer = document.getElementById('audioPlayer');
     audioPlayer.src = `https://api.voicerss.org/?key=c7e7512d876444aa933c2a0a21f6ad8b&hl=bg-bg&src=${encodeURIComponent(summaryText)}&r=0`;
 });
-
-
-
-
 
 
 
