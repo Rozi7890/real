@@ -24,6 +24,7 @@ document.getElementById('analyzeButton').addEventListener('click', async functio
             alert('Неуспешно разпознаване на текста от PDF!');
         });
     } else {
+        // Разпознаване на текст от изображение с Tesseract.js
         Tesseract.recognize(
             file,
             'bul', // Български език
@@ -37,7 +38,7 @@ document.getElementById('analyzeButton').addEventListener('click', async functio
     }
 });
 
-// Разпознаване на текст от PDF
+// Разпознаване на текст от PDF (използва pdf.js)
 async function extractTextFromPDF(file) {
     const reader = new FileReader();
     return new Promise((resolve, reject) => {
@@ -61,7 +62,7 @@ async function extractTextFromPDF(file) {
 }
 
 // 👉 ТУК ВМЪКНИ ТВОЯ APYHUB API КЛЮЧ
-const APYHUB_API_KEY = 'APY0U4A3taPQW9hc803Bvbqyqp3XhM4XpPLbpnc2bOUdb2KFqzatMJVXK2gILlRAq6BQtgs'; // <--- смени това
+const APYHUB_API_KEY = 'APY0U4A3taPQW9hc803Bvbqyqp3XhM4XpPLbpnc2bOUdb2KFqzatMJVXK2gILlRAq6BQtgs'; // Вмъкни тук твоят API ключ за ApyHub
 
 // Обобщаване чрез ApyHub
 async function summarizeTextAI(text) {
@@ -103,7 +104,7 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
 });
 
 // 👉 ТУК ВМЪКНИ ТВОЯ VOICERSS API КЛЮЧ
-const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b'; // <--- смени това
+const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b'; // Вмъкни тук твоят API ключ за VoiceRSS
 
 // Превръщане на текста в аудио
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
@@ -124,6 +125,7 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         alert('Грешка при зареждане на аудиото. Опитайте отново!');
     });
 });
+
 
 
 
