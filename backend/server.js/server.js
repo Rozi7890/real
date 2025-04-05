@@ -7,6 +7,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Endpoint за обобщаване на текст
 app.post('/summarize', async (req, res) => {
     const { text } = req.body;
     try {
@@ -36,3 +37,4 @@ app.post('/summarize', async (req, res) => {
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Бекендът работи на порт ${PORT}`));
+
