@@ -61,25 +61,24 @@ async function extractTextFromPDF(file) {
     });
 }
 
-// 👉 ТУК ВМЪКНИ ТВОЯ APYHUB API КЛЮЧ
-const APYHUB_API_KEY = 'APY0U4A3taPQW9hc803Bvbqyqp3XhM4XpPLbpnc2bOUdb2KFqzatMJVXK2gILlRAq6BQtgs'; // Замени с твоя API ключ
+// 👉 ТУК ВМЪКНИ ТВОЯ HUGGINGFACE API КЛЮЧ
+const HUGGINGFACE_API_KEY = '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'; // Замени с твоя API ключ от Hugging Face
 
-// Обобщаване чрез ApyHub
+// Обобщаване чрез Hugging Face
 async function summarizeTextAI(text) {
-    const response = await fetch('https://api.apyhub.com/generate/ai/text/summarize', {
+    const response = await fetch('https://api-inference.huggingface.co/models/facebook/bart-large-cnn', {
         method: 'POST',
         headers: {
-            'Authorization': `Bearer ${APYHUB_API_KEY}`,
+            'Authorization': `Bearer ${HUGGINGFACE_API_KEY}`,
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-            content: text,
-            type: 'short' // 'short', 'detailed', 'bullets'
+            inputs: text,
         })
     });
 
     const result = await response.json();
-    return result.data || "Грешка при обобщаването.";
+    return result[0].summary_text || "Грешка при обобщаването.";
 }
 
 // Обработка на бутона "Обобщи"
@@ -99,12 +98,12 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
         summaryElement.textContent = summarizedText;
     } catch (error) {
         console.error('Грешка при обобщаването:', error);
-        summaryElement.textContent = "Грешка при AI обобщаването!";
+        summaryElement.textContent = "Грешка при обобщаването!";
     }
 });
 
 // 👉 ТУК ВМЪКНИ ТВОЯ VOICERSS API КЛЮЧ
-const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b'; // Замени с твоя API ключ
+const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b'; // Замени с твоя API ключ от VoiceRSS
 
 // Преобразуване в аудио с VoiceRSS
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
