@@ -17,7 +17,6 @@ document.getElementById('analyzeButton').addEventListener('click', async functio
     extractedTextElement.textContent = "Обработване...";
 
     if (fileType === "application/pdf") {
-        // Разпознаване на текст от PDF
         extractTextFromPDF(file).then(text => {
             extractedTextElement.textContent = text || 'Не беше намерен текст в PDF файла.';
         }).catch(error => {
@@ -25,7 +24,6 @@ document.getElementById('analyzeButton').addEventListener('click', async functio
             alert('Неуспешно разпознаване на текста от PDF!');
         });
     } else {
-        // Разпознаване на текст от изображение с Tesseract.js
         Tesseract.recognize(
             file,
             'bul', // Български език
@@ -39,7 +37,7 @@ document.getElementById('analyzeButton').addEventListener('click', async functio
     }
 });
 
-// Функция за разпознаване на текст от PDF (използва pdf.js)
+// Разпознаване на текст от PDF
 async function extractTextFromPDF(file) {
     const reader = new FileReader();
     return new Promise((resolve, reject) => {
@@ -62,21 +60,28 @@ async function extractTextFromPDF(file) {
     });
 }
 
-// Функция за AI обобщение
+// 👉 ТУК ВМЪКНИ ТВОЯ APYHUB API КЛЮЧ
+const APYHUB_API_KEY = 'APY0U4A3taPQW9hc803Bvbqyqp3XhM4XpPLbpnc2bOUdb2KFqzatMJVXK2gILlRAq6BQtgs'; // <--- смени това
+
+// Обобщаване чрез ApyHub
 async function summarizeTextAI(text) {
-    const response = await fetch('http://localhost:3000/summarize', {  // Адрес на сървъра
+    const response = await fetch('https://api.apyhub.com/generate/ai/text/summarize', {
         method: 'POST',
         headers: {
+            'Authorization': `Bearer ${APYHUB_API_KEY}`,
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({
+            content: text,
+            type: 'short' // 'short', 'detailed', 'bullets'
+        })
     });
 
     const result = await response.json();
-    return result.summary || "Грешка при обобщаването.";
+    return result.data || "Грешка при обобщаването.";
 }
 
-// Обобщаване на текста
+// Обработка на бутона "Обобщи"
 document.getElementById('summarizeButton').addEventListener('click', async function () {
     const extractedText = document.getElementById('extractedText').textContent;
     const summaryElement = document.getElementById('summaryText');
@@ -92,11 +97,15 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
         const summarizedText = await summarizeTextAI(extractedText);
         summaryElement.textContent = summarizedText;
     } catch (error) {
+        console.error('Грешка при обобщаването:', error);
         summaryElement.textContent = "Грешка при AI обобщаването!";
     }
 });
 
-// Конвертиране в аудио чрез VoiceRSS
+// 👉 ТУК ВМЪКНИ ТВОЯ VOICERSS API КЛЮЧ
+const VOICERSS_API_KEY = 'c7e7512d876444aa933c2a0a21f6ad8b'; // <--- смени това
+
+// Превръщане на текста в аудио
 document.getElementById('convertToAudioButton').addEventListener('click', function () {
     const summaryText = document.getElementById('summaryText').textContent;
     const audioPlayer = document.getElementById('audioPlayer');
@@ -106,10 +115,8 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
-    // ВАЖНО: Замени YOUR_VOICERSS_API_KEY с твоя валиден ключ!
-    const apiKey = 'c7e7512d876444aa933c2a0a21f6ad8b';
     const encodedText = encodeURIComponent(summaryText);
-    const ttsUrl = `https://api.voicerss.org/?key=${apiKey}&hl=bg-bg&src=${encodedText}&c=MP3&f=44khz_16bit_stereo`;
+    const ttsUrl = `https://api.voicerss.org/?key=${VOICERSS_API_KEY}&hl=bg-bg&src=${encodedText}&c=MP3&f=44khz_16bit_stereo`;
 
     audioPlayer.src = ttsUrl;
     audioPlayer.play().catch(error => {
