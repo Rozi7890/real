@@ -1,32 +1,39 @@
-name: Deploy to Server
+require('dotenv').config();
+const express = require('express');
+const fetch = require('node-fetch');
+const cors = require('cors');
 
-on:
-  push:
-    branches:
-      - main  # или друга основна клонка, която използваш
+const app = express();
+app.use(cors());
+app.use(express.json());
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+app.post('/summarize', async (req, res) => {
+    const { text } = req.body;
+    try {
+        const response = await fetch('https://api.openai.com/v1/chat/completions', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: 'gpt-3.5-turbo',
+                messages: [
+                    { role: 'system', content: 'Ти си AI, който обобщава текст.' },
+                    { role: 'user', content: `Обобщи:\n\n${text}` }
+                ],
+                max_tokens: 300
+            })
+        });
 
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+        const data = await response.json();
+        res.json({ summary: data.choices?.[0]?.message?.content || 'Няма резултат.' });
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Грешка при OpenAI заявката.' });
+    }
+});
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '14'
-
-    - name: Install dependencies
-      run: npm install
-
-    - name: Set environment variables
-      run: |
-        echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> $GITHUB_ENV
-
-    - name: Deploy to server
-      run: |
-        git remote add heroku https://git.heroku.com/your-app-name.git
-        git push heroku main
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Бекендът работи на порт ${PORT}`));
 
