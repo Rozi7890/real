@@ -1,5 +1,5 @@
 // 💡 Задаваме адреса на бекенда
-const BACKEND_URL = 'https://smartify-backend.onrender.com';
+const BACKEND_URL = 'https://smartify-backend.onrender.com'; // Увери се, че е правилен!
 
 // Разпознаване на текст от изображение или PDF
 document.getElementById('analyzeButton').addEventListener('click', async function () {
@@ -132,4 +132,5 @@ document.getElementById('convertToAudioButton').addEventListener('click', async 
         alert('Проблем с комуникацията със сървъра.');
     }
 });
+
 
