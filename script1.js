@@ -1,3 +1,8 @@
+// 👉 Динамична променлива за бекенд URL
+const BACKEND_URL = window.location.hostname.includes('localhost')
+    ? 'http://localhost:3000'
+    : 'https://smartify-backend.onrender.com'; // сложи тук реалния ти URL, ако е различен
+
 // Разпознаване на текст от изображение или PDF
 document.getElementById('analyzeButton').addEventListener('click', async function () {
     const fileInput = document.getElementById('fileInput');
@@ -21,10 +26,9 @@ document.getElementById('analyzeButton').addEventListener('click', async functio
             alert('Неуспешно разпознаване на текста от PDF!');
         });
     } else {
-        // Разпознаване на текст от изображение с Tesseract.js
         Tesseract.recognize(
             file,
-            'bul', // Български език
+            'bul',
             { logger: (m) => console.log(m) }
         ).then(({ data: { text } }) => {
             extractedTextElement.textContent = text || 'Не беше намерен текст в изображението.';
@@ -35,7 +39,6 @@ document.getElementById('analyzeButton').addEventListener('click', async functio
     }
 });
 
-// Разпознаване на текст от PDF (използва pdf.js)
 async function extractTextFromPDF(file) {
     const reader = new FileReader();
     return new Promise((resolve, reject) => {
@@ -60,26 +63,31 @@ async function extractTextFromPDF(file) {
 
 // Обобщаване чрез бекенд сървъра
 async function summarizeTextAI(text) {
-    const response = await fetch('http://localhost:3000/summarize', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: text })
-    });
+    try {
+        const response = await fetch(`${BACKEND_URL}/summarize`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text })
+        });
 
-    if (!response.ok) {
-        const errorMessage = await response.text();
-        console.error('Грешка при обобщаването:', errorMessage);
-        alert('Грешка при обобщаването!');
+        if (!response.ok) {
+            const errorMessage = await response.text();
+            console.error('Грешка при обобщаването:', errorMessage);
+            alert('Грешка при обобщаването!');
+            return null;
+        }
+
+        const result = await response.json();
+        return result.summary || "Грешка при обобщаването.";
+    } catch (err) {
+        console.error('Грешка при обобщаването:', err);
+        alert('Възникна проблем с обобщаването.');
         return null;
     }
-
-    const result = await response.json();
-    return result.summary || "Грешка при обобщаването.";
 }
 
-// Обработка на бутона "Обобщи"
 document.getElementById('summarizeButton').addEventListener('click', async function () {
     const extractedText = document.getElementById('extractedText').textContent;
     const summaryElement = document.getElementById('summaryText');
@@ -91,13 +99,8 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
 
     summaryElement.textContent = "Обобщаване...";
 
-    try {
-        const summarizedText = await summarizeTextAI(extractedText);
-        summaryElement.textContent = summarizedText;
-    } catch (error) {
-        console.error('Грешка при обобщаването:', error);
-        summaryElement.textContent = "Грешка при обобщаването!";
-    }
+    const summarizedText = await summarizeTextAI(extractedText);
+    summaryElement.textContent = summarizedText || "Грешка при обобщаването!";
 });
 
 // Преобразуване в аудио чрез бекенд сървъра
@@ -109,25 +112,30 @@ document.getElementById('convertToAudioButton').addEventListener('click', async 
         return;
     }
 
-    const response = await fetch('http://localhost:3000/convert-to-audio', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ text: summaryText })
-    });
+    try {
+        const response = await fetch(`${BACKEND_URL}/convert-to-audio`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ text: summaryText })
+        });
 
-    if (!response.ok) {
-        console.error('Грешка при преобразуването в аудио');
-        alert('Грешка при преобразуването в аудио');
-        return;
+        if (!response.ok) {
+            console.error('Грешка при преобразуването в аудио');
+            alert('Грешка при преобразуването в аудио');
+            return;
+        }
+
+        const data = await response.json();
+        const audioPlayer = document.getElementById('audioPlayer');
+        audioPlayer.src = data.audioUrl;
+        audioPlayer.play();
+    } catch (error) {
+        console.error('Грешка при заявката:', error);
+        alert('Проблем с комуникацията със сървъра.');
     }
-
-    const data = await response.json();
-    const audioPlayer = document.getElementById('audioPlayer');
-    audioPlayer.src = data.audioUrl;
 });
-
 
 
 
