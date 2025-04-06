@@ -1,6 +1,3 @@
-// Инициализиране на pdf.js worker
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.13.216/pdf.worker.min.js';
-
 // Разпознаване на текст от изображение или PDF
 document.getElementById('analyzeButton').addEventListener('click', async function () {
     const fileInput = document.getElementById('fileInput');
@@ -103,8 +100,8 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
     }
 });
 
-// Преобразуване в аудио чрез VoiceRSS API
-document.getElementById('convertToAudioButton').addEventListener('click', function () {
+// Преобразуване в аудио чрез бекенд сървъра
+document.getElementById('convertToAudioButton').addEventListener('click', async function () {
     const summaryText = document.getElementById('summaryText').textContent;
 
     if (!summaryText || summaryText.includes('Грешка')) {
@@ -112,8 +109,23 @@ document.getElementById('convertToAudioButton').addEventListener('click', functi
         return;
     }
 
+    const response = await fetch('http://localhost:3000/convert-to-audio', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ text: summaryText })
+    });
+
+    if (!response.ok) {
+        console.error('Грешка при преобразуването в аудио');
+        alert('Грешка при преобразуването в аудио');
+        return;
+    }
+
+    const data = await response.json();
     const audioPlayer = document.getElementById('audioPlayer');
-    audioPlayer.src = `https://api.voicerss.org/?key=c7e7512d876444aa933c2a0a21f6ad8b&hl=bg-bg&src=${encodeURIComponent(summaryText)}&r=0`;
+    audioPlayer.src = data.audioUrl;
 });
 
 
