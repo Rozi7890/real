@@ -1,7 +1,5 @@
-// 👉 Динамична променлива за бекенд URL
-const BACKEND_URL = window.location.hostname.includes('localhost')
-    ? 'http://localhost:3000'
-    : 'https://smartify-backend.onrender.com'; // сложи тук реалния ти URL, ако е различен
+// 💡 Задаваме адреса на бекенда
+const BACKEND_URL = 'https://smartify-backend.onrender.com';
 
 // Разпознаване на текст от изображение или PDF
 document.getElementById('analyzeButton').addEventListener('click', async function () {
@@ -61,7 +59,6 @@ async function extractTextFromPDF(file) {
     });
 }
 
-// Обобщаване чрез бекенд сървъра
 async function summarizeTextAI(text) {
     try {
         const response = await fetch(`${BACKEND_URL}/summarize`, {
@@ -103,7 +100,6 @@ document.getElementById('summarizeButton').addEventListener('click', async funct
     summaryElement.textContent = summarizedText || "Грешка при обобщаването!";
 });
 
-// Преобразуване в аудио чрез бекенд сървъра
 document.getElementById('convertToAudioButton').addEventListener('click', async function () {
     const summaryText = document.getElementById('summaryText').textContent;
 
@@ -136,6 +132,4 @@ document.getElementById('convertToAudioButton').addEventListener('click', async 
         alert('Проблем с комуникацията със сървъра.');
     }
 });
-
-
 
